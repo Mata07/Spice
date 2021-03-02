@@ -8,6 +8,7 @@ namespace Spice.Extensions
 {
     public static class IEnumerableExtension
     {
+        //To convert IEnumerable to SelectListItem in View for SubCategory/Create - CategoryList
         public static IEnumerable<SelectListItem> ToSelectListItem<T>(this IEnumerable<T> items, int selectedValue)
         {
             return from item in items

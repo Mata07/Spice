@@ -79,7 +79,7 @@ namespace Spice.Areas.Admin.Controllers
             return View(modelVM);
         }
 
-        // Return SelectList of SubCategories
+        // Return SelectList of SubCategories for SubCategory menu in Create View
         [ActionName("GetSubCategory")]
         public async Task<IActionResult> GetSubCategory(int id)
         {

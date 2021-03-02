@@ -20,7 +20,7 @@
                 <div class="col-3">
                     <label asp-for="SubCategory.CategoryId" class="col-form-label"></label>
                 </div>
-                <div class="col-5">
+                <div class="col-5">                                                          @*Convert CategoryList to SelectList via extension method*@                   
                     <select id="ddlCategorylist" asp-for="SubCategory.CategoryId" asp-items="Model.CategoryList.ToSelectListItem(Model.SubCategory.CategoryId)" class="form-control"></select>
                 </div>
             </div>
