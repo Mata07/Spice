@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Spice.Data;
+using Spice.Models;
+using Spice.Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,11 +18,22 @@ namespace Spice.Areas.Admin.Controllers
         // for images
         private readonly IWebHostEnvironment _hostingEnvironment;
 
+        // property is bind to this controller
+        // so we do not need to pass it in Action where we use it
+        [BindProperty] 
+        public MenuItemViewModel MenuItemVM { get; set; }
 
         public MenuItemController(ApplicationDbContext db, IWebHostEnvironment hostingEnvironment)
         {
             _db = db;
             _hostingEnvironment = hostingEnvironment;
+
+            MenuItemVM = new MenuItemViewModel()
+            {
+                //SubCategory will depend on which category is selected, so it is not defined here
+                Category = _db.Category,
+                MenuItem = new MenuItem()
+            };
         }
 
         public async Task<IActionResult> Index()
@@ -32,5 +45,15 @@ namespace Spice.Areas.Admin.Controllers
 
             return View(menuItems);
         }
+
+
+        //GET - Create
+        public IActionResult Create()
+        {
+            // no need to pass it in because is binded -MenuItemVM
+            return View(MenuItemVM);
+        }
+
+
     }
 }
