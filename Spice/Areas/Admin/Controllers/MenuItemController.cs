@@ -124,7 +124,7 @@ namespace Spice.Areas.Admin.Controllers
             MenuItemVM.MenuItem = await _db.MenuItem
                 .Include(m => m.Category)
                 .Include(m => m.SubCategory)
-                .SingleOrDefaultAsync();
+                .SingleOrDefaultAsync(m => m.Id == id);
             MenuItemVM.SubCategory = await _db.SubCategory.Where(s => s.CategoryId == MenuItemVM.MenuItem.CategoryId).ToListAsync();
 
             if (MenuItemVM.MenuItem == null)
