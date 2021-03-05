@@ -113,6 +113,88 @@ namespace Spice.Areas.Admin.Controllers
         }
 
 
+        //GET - Edit
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            MenuItemVM.MenuItem = await _db.MenuItem
+                .Include(m => m.Category)
+                .Include(m => m.SubCategory)
+                .SingleOrDefaultAsync();
+            MenuItemVM.SubCategory = await _db.SubCategory.Where(s => s.CategoryId == MenuItemVM.MenuItem.CategoryId).ToListAsync();
+
+            if (MenuItemVM.MenuItem == null)
+            {
+                return NotFound();
+            }
+            return View(MenuItemVM);
+        }
+
+        //POST - Edit
+        [HttpPost, ActionName("Edit")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditPOST(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            MenuItemVM.MenuItem.SubCategoryId = Convert.ToInt32(Request.Form["SubCategoryID"].ToString());
+
+            if (!ModelState.IsValid)
+            {
+                return View(MenuItemVM);
+            }
+
+            _db.MenuItem.Add(MenuItemVM.MenuItem);
+            await _db.SaveChangesAsync();
+
+            //Work on image saving section
+            //Image name should be unique - rename image to Id
+
+            // get web root of app
+            string webRootPath = _hostingEnvironment.WebRootPath;
+            // extract files user has submitted (from form)
+            var files = HttpContext.Request.Form.Files;
+
+            // get menu item from database from Id
+            var menuItemFromDb = await _db.MenuItem.FindAsync(MenuItemVM.MenuItem.Id);
+
+            if (files.Count > 0)
+            {
+                //files has been uploaded
+                // uploads - final path of uploaded image (wwwroot/images)
+                var uploads = Path.Combine(webRootPath, "images");
+                // get extension of first uploaded file (.jpg)
+                var extension = Path.GetExtension(files[0].FileName);
+
+                // move uploaded image and rename it to Id + extension (wwwroot/images/1.jpg)
+                using (var filesStream = new FileStream(Path.Combine(uploads, MenuItemVM.MenuItem.Id + extension), FileMode.Create))
+                {
+                    files[0].CopyTo(filesStream);
+                }
+                // add location of saved image to db - MenuItem.Image
+                menuItemFromDb.Image = @"\images\" + MenuItemVM.MenuItem.Id + extension;
+            }
+            else
+            {
+                // no file was uploaded, so use default image
+                var uploads = Path.Combine(webRootPath, @"images\" + SD.DefaultFoodImage);
+                // copy from uploads
+                System.IO.File.Copy(uploads, webRootPath + @"\images\" + MenuItemVM.MenuItem.Id + ".png");
+                // update db
+                menuItemFromDb.Image = @"\images\" + MenuItemVM.MenuItem.Id + ".png";
+            }
+
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
 
 
     }
