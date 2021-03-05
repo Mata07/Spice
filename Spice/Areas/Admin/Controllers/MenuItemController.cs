@@ -148,12 +148,11 @@ namespace Spice.Areas.Admin.Controllers
 
             if (!ModelState.IsValid)
             {
+                // again populate SubCategory
+                MenuItemVM.SubCategory = await _db.SubCategory.Where(s => s.CategoryId == MenuItemVM.MenuItem.CategoryId).ToListAsync();
                 return View(MenuItemVM);
             }
-
-            _db.MenuItem.Add(MenuItemVM.MenuItem);
-            await _db.SaveChangesAsync();
-
+            
             //Work on image saving section
             //Image name should be unique - rename image to Id
 
@@ -167,30 +166,38 @@ namespace Spice.Areas.Admin.Controllers
 
             if (files.Count > 0)
             {
-                //files has been uploaded
+                //new image has been uploaded
                 // uploads - final path of uploaded image (wwwroot/images)
                 var uploads = Path.Combine(webRootPath, "images");
                 // get extension of first uploaded file (.jpg)
-                var extension = Path.GetExtension(files[0].FileName);
+                var extension_new = Path.GetExtension(files[0].FileName);
 
-                // move uploaded image and rename it to Id + extension (wwwroot/images/1.jpg)
-                using (var filesStream = new FileStream(Path.Combine(uploads, MenuItemVM.MenuItem.Id + extension), FileMode.Create))
+                // delete the original file
+                var imagePath = Path.Combine(webRootPath, menuItemFromDb.Image.TrimStart('\\'));
+                if (System.IO.File.Exists(imagePath))
+                {
+                    System.IO.File.Delete(imagePath);
+                }
+
+                // upload new image and rename it to Id + extension (wwwroot/images/1.jpg)
+                using (var filesStream = new FileStream(Path.Combine(uploads, MenuItemVM.MenuItem.Id + extension_new), FileMode.Create))
                 {
                     files[0].CopyTo(filesStream);
                 }
                 // add location of saved image to db - MenuItem.Image
-                menuItemFromDb.Image = @"\images\" + MenuItemVM.MenuItem.Id + extension;
-            }
-            else
-            {
-                // no file was uploaded, so use default image
-                var uploads = Path.Combine(webRootPath, @"images\" + SD.DefaultFoodImage);
-                // copy from uploads
-                System.IO.File.Copy(uploads, webRootPath + @"\images\" + MenuItemVM.MenuItem.Id + ".png");
-                // update db
-                menuItemFromDb.Image = @"\images\" + MenuItemVM.MenuItem.Id + ".png";
+                menuItemFromDb.Image = @"\images\" + MenuItemVM.MenuItem.Id + extension_new;
             }
 
+            // if user changed only text or anything else than image
+            // update properties in db
+            menuItemFromDb.Name = MenuItemVM.MenuItem.Name;
+            menuItemFromDb.Description = MenuItemVM.MenuItem.Description;
+            menuItemFromDb.Price = MenuItemVM.MenuItem.Price;
+            menuItemFromDb.Spicyness = MenuItemVM.MenuItem.Spicyness;
+            menuItemFromDb.CategoryId = MenuItemVM.MenuItem.CategoryId;
+            menuItemFromDb.SubCategoryId = MenuItemVM.MenuItem.SubCategoryId;
+
+            // save changes
             await _db.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
