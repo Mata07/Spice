@@ -15,7 +15,7 @@ namespace Spice.Models
         public string Name { get; set; }
 
         [Required]
-        public string Type { get; set; }
+        public string CouponType { get; set; }
 
         public enum ECouponType { Percent = 0, Dollar = 1 }
 
