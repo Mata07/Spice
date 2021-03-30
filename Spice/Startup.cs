@@ -41,6 +41,14 @@ namespace Spice
 
             services.AddControllersWithViews();
             services.AddRazorPages().AddRazorRuntimeCompilation();  // Added Runtime Compilation
+
+            // Add Session
+            services.AddSession(options =>
+            {
+                options.Cookie.IsEssential = true;
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,6 +69,8 @@ namespace Spice
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseSession(); //added session
 
             app.UseAuthentication();
             app.UseAuthorization();
