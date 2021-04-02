@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -29,6 +30,11 @@ namespace Spice.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnPost(string returnUrl = null)
         {
             await _signInManager.SignOutAsync();
+
+            // When user logs out set ShoppingCart Count to 0 for session
+            // as set in Login
+            HttpContext.Session.SetInt32("ssCartCount", 0);
+
             _logger.LogInformation("User logged out.");
             if (returnUrl != null)
             {
