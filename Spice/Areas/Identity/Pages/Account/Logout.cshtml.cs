@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Spice.Utility;
 
 namespace Spice.Areas.Identity.Pages.Account
 {
@@ -33,7 +34,7 @@ namespace Spice.Areas.Identity.Pages.Account
 
             // When user logs out set ShoppingCart Count to 0 for session
             // as set in Login
-            HttpContext.Session.SetInt32("ssCartCount", 0);
+            HttpContext.Session.SetInt32(SD.ssShoppingCartCount, 0);
 
             _logger.LogInformation("User logged out.");
             if (returnUrl != null)

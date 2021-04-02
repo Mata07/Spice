@@ -4,30 +4,30 @@
 
 @if (Model.Coupon.ToList().Count > 0)
 {
-<div class="border">
-    <div class="carousel" data-ride="carousel" data-interval="2500">
-        @for (int i = 0; i < Model.Coupon.Count(); i++)
-        {
-            if (i == 0)
+    <div class="border">
+        <div class="carousel" data-ride="carousel" data-interval="2500">
+            @for (int i = 0; i < Model.Coupon.Count(); i++)
             {
-<div class="carousel-item active">
-    @*convert image from db to base64String *@
-    @{ var base64 = Convert.ToBase64String(Model.Coupon.ToList()[i].Picture);
-        var imgsrc = string.Format("data:image/jpg;base64,{0}", base64); }
+                if (i == 0)
+                {
+                    <div class="carousel-item active">
+                        @*convert image from db to base64String *@
+                        @{ var base64 = Convert.ToBase64String(Model.Coupon.ToList()[i].Picture);
+                            var imgsrc = string.Format("data:image/jpg;base64,{0}", base64); }
 
-    <img src="@imgsrc" height="50" class="d-block w-100" />
-</div> }
-else
-{
-<div class="carousel-item">
-    @{ var base64 = Convert.ToBase64String(Model.Coupon.ToList()[i].Picture);
-        var imgsrc = string.Format("data:image/jpg;base64,{0}", base64); }
+                        <img src="@imgsrc" height="50" class="d-block w-100" />
+                    </div> }
+                else
+                {
+                    <div class="carousel-item">
+                        @{ var base64 = Convert.ToBase64String(Model.Coupon.ToList()[i].Picture);
+                            var imgsrc = string.Format("data:image/jpg;base64,{0}", base64); }
 
-    <img src="@imgsrc" height="50" class="d-block w-100" />
-</div>}
-}
-    </div>
-</div>}
+                        <img src="@imgsrc" height="50" class="d-block w-100" />
+                    </div>}
+            }
+        </div>
+    </div>}
 
 <br />
 <br />
@@ -39,15 +39,15 @@ else
 
         @foreach (var item in Model.Category)
         {
-<li class="ml-1 mr-1" data-filter=".@item.Name.Replace(" ",string.Empty)">@item.Name</li>
-}
+            <li class="ml-1 mr-1" data-filter=".@item.Name.Replace(" ",string.Empty)">@item.Name</li>
+        }
     </ul>
 
     @foreach (var category in Model.Category)
     {
-<div class="row" id="menu-wrapper">
-    <partial name="_ThumbnailAreaPartial" model="@Model.MenuItem.Where(u=>u.Category.Name.Equals(category.Name))" />
-</div>}
+        <div class="row" id="menu-wrapper">
+            <partial name="_ThumbnailAreaPartial" model="@Model.MenuItem.Where(u=>u.Category.Name.Equals(category.Name))" />
+        </div>}
 </div>
 
 @section Scripts{
@@ -56,7 +56,7 @@ else
             crossorigin="anonymous"></script>
 
     <script>
-    var posts = $('.post');
+        var posts = $('.post');
 
         (function ($) {
 

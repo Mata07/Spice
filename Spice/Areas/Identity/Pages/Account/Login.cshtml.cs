@@ -15,6 +15,7 @@ using Spice.Data;
 using Microsoft.EntityFrameworkCore;
 using Spice.Models;
 using Microsoft.AspNetCore.Http;
+using Spice.Utility;
 
 namespace Spice.Areas.Identity.Pages.Account
 {
@@ -97,7 +98,7 @@ namespace Spice.Areas.Identity.Pages.Account
                     // get user ShoppingCart items
                     List<ShoppingCart> lstShoppingCart = await _db.ShoppingCart.Where(u => u.ApplicationUserId == user.Id).ToListAsync();
                     // pass to session number of items (.Count)
-                    HttpContext.Session.SetInt32("ssCartCount", lstShoppingCart.Count);
+                    HttpContext.Session.SetInt32(SD.ssShoppingCartCount, lstShoppingCart.Count);
 
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
